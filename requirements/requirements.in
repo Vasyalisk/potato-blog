@@ -1,0 +1,12 @@
+pip-tools
+Django==4.1
+django-filter
+drf-yasg
+django-environ
+black
+djangorestframework
+djangorestframework-simplejwt
+drf-standardized-errors
+isort
+python-dotenv
+mysqlclient
