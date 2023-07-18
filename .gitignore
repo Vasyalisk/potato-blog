@@ -51,6 +51,7 @@ var/
 
 .idea/
 db_data/
+blog/staticfiles/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
