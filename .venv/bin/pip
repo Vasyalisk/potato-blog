@@ -1,4 +1,4 @@
-#!/Users/igorvasylchenko/Dev/Local/blog/.venv/bin/python3
+#!/home/vasyalisk/Documents/Development/blog/.venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
