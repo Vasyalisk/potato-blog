@@ -4,6 +4,7 @@ import os
 import sys
 from dotenv import load_dotenv
 
+# Utility to run venv version
 load_dotenv("../.env")
 
 

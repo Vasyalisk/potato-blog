@@ -1,10 +1,10 @@
 pip-tools
 Django==4.1
 django-filter
-drf-yasg
+drf-yasg==1.21
 django-environ
 black
-djangorestframework
+djangorestframework==3.12
 djangorestframework-simplejwt
 drf-standardized-errors
 isort

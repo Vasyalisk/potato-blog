@@ -25,4 +25,8 @@ create-venv:
 
 .PHONY: pip-compile
 pip-compile:
-	@docker-compose exec app pip-compile --allow-unsafe --generate-hashes --output-file=./requirements/requirements.txt ./requirements/requirements.in
+	@docker-compose exec app pip-compile --allow-unsafe --generate-hashes --output-file=/requirements/requirements.txt /requirements/requirements.in
+
+.PHONY: bash
+bash:
+	@docker-compose exec app bash

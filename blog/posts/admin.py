@@ -15,6 +15,7 @@ class PostAdmin(admin.ModelAdmin):
         "updated_at",
         "title",
         "content",
+        "user",
     ]
     readonly_fields = [
         "created_at",
