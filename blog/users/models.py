@@ -1,5 +1,14 @@
 from django.db import models
-from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, UnicodeUsernameValidator, UserManager
+from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, UnicodeUsernameValidator
+from django.contrib.auth.models import UserManager as DefaultUserManager
+
+
+class UserManager(DefaultUserManager):
+
+    # Patch to allow nullable emails
+    @classmethod
+    def normalize_email(cls, email):
+        return super().normalize_email(email) or None
 
 
 class User(AbstractBaseUser, PermissionsMixin):

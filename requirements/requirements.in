@@ -10,3 +10,4 @@ drf-standardized-errors
 isort
 python-dotenv
 mysqlclient
+django-rest-passwordreset

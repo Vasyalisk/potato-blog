@@ -19,7 +19,11 @@ class CommentListSerializer(serializers.ModelSerializer):
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     user = UserListSerializer(read_only=True)
-    post_id = serializers.IntegerField(write_only=True)
+    post_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="post",
+        queryset=posts.models.Post.objects.all(),
+    )
 
     class Meta:
         model = feedback.models.Comment

@@ -19,6 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from core.swagger import get_swagger_view
 
+
 urlpatterns = [
     path("", include("users.urls")),
     path("", include("posts.urls")),
@@ -26,8 +27,9 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    path("swagger/", get_swagger_view(patterns=urlpatterns[:]), name="swagger-ui"),
-    path("admin/", admin.site.urls),
+    path("docs", get_swagger_view(patterns=urlpatterns[:]), name="swagger-ui"),
+    path("admin", admin.site.urls),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
