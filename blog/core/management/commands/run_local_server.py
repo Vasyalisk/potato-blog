@@ -1,6 +1,7 @@
-from django.core.management.commands import runserver
-from django.db import connection, OperationalError
 import time
+
+from django.core.management.commands import runserver
+from django.db import OperationalError, connection
 
 
 class Command(runserver.Command):

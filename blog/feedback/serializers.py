@@ -1,8 +1,9 @@
-from rest_framework import serializers
-import feedback.models
-from users.serializers import UserListSerializer
-import posts.models
 from django.db import models
+from rest_framework import serializers
+
+import feedback.models
+import posts.models
+from users.serializers import UserListSerializer
 
 
 class CommentListSerializer(serializers.ModelSerializer):
@@ -71,10 +72,7 @@ class BaseLikeChangeSerializer(serializers.Serializer):
         ]
 
     def update(self, parent_instance, validated_data):
-        action_map = {
-            True: self.add_like,
-            False: self.remove_like
-        }
+        action_map = {True: self.add_like, False: self.remove_like}
         # noinspection PyArgumentList
         action_map[validated_data["is_liked"]](parent_instance)
 

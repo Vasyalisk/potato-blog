@@ -1,4 +1,5 @@
 from rest_framework.routers import SimpleRouter
+
 from posts import views
 
 router = SimpleRouter(trailing_slash=False)

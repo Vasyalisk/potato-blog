@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from pathlib import Path
 import os
-import environ
 from datetime import timedelta
+from pathlib import Path
+
+import environ
 
 env = environ.Env()
 
@@ -129,7 +130,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -137,9 +138,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
-    "DEFAULT_FILTER_BACKENDS": ['django_filters.rest_framework.DjangoFilterBackend'],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework_simplejwt.authentication.JWTAuthentication"],
 }
 
@@ -154,20 +155,20 @@ SIMPLE_JWT = {
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
         }
     },
     "USE_SESSION_AUTH": False,
     "PERSIST_AUTH": True if env.bool("DEBUG", False) else False,
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', None)
-EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', None)
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", None)
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", None)
 DEFAULT_FROM_EMAIL = env.str("EMAIL_HOST_USER", None)
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

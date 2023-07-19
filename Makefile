@@ -1,6 +1,6 @@
 VENV_ROOT=./.venv
 VENV=${VENV_ROOT}/bin/activate
-APP_DIR=./blog
+APP_DIR=.
 
 .PHONY: help
 help:
@@ -14,9 +14,9 @@ help:
 .PHONY: lint
 lint:
 	@echo "Sorting imports..."
-	@source ${VENV};isort ${APP_DIR} --profile black --skip migrations --line-length 120
+	@docker-compose exec app isort ${APP_DIR} --profile black --skip migrations --line-length 120
 	@echo "Formatting code..."
-	@source ${VENV};black ${APP_DIR} --line-length 120 --extend-exclude "/(|migrations)/"
+	@docker-compose exec app black ${APP_DIR} --line-length 120 --extend-exclude "/(|migrations)/"
 
 .PHONY: create-venv
 create-venv:

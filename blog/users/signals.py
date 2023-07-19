@@ -1,10 +1,9 @@
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.urls import reverse
-
 from django_rest_passwordreset.signals import reset_password_token_created
-from django.conf import settings
 
 
 @receiver(reset_password_token_created)
@@ -24,15 +23,15 @@ def on_reset_password_token_created(sender, instance, reset_password_token, *arg
 
     # send an e-mail to the user
     context = {
-        'username': reset_password_token.user.username,
-        'email': reset_password_token.user.email,
-        'reset_password_url': "{}?token={}".format(
-            instance.request.build_absolute_uri(reverse('auth-reset-password-confirm')),
-            reset_password_token.key)
+        "username": reset_password_token.user.username,
+        "email": reset_password_token.user.email,
+        "reset_password_url": "{}?token={}".format(
+            instance.request.build_absolute_uri(reverse("auth-reset-password-confirm")), reset_password_token.key
+        ),
     }
 
-    email_html_message = render_to_string('email/user_reset_password.html', context)
-    email_plaintext_message = render_to_string('email/user_reset_password.txt', context)
+    email_html_message = render_to_string("email/user_reset_password.html", context)
+    email_plaintext_message = render_to_string("email/user_reset_password.txt", context)
 
     msg = EmailMultiAlternatives(
         subject="Password Reset for Blog",

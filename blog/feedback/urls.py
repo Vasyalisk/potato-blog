@@ -1,6 +1,7 @@
-from rest_framework.routers import SimpleRouter
-from feedback import views
 from django.urls import path
+from rest_framework.routers import SimpleRouter
+
+from feedback import views
 
 router = SimpleRouter(trailing_slash=False)
 router.register("comments", views.CommentViewSet, basename="comment")

@@ -1,6 +1,6 @@
-from django.core.management import BaseCommand
-from django.contrib.auth import get_user_model
 import environ
+from django.contrib.auth import get_user_model
+from django.core.management import BaseCommand
 
 
 class Command(BaseCommand):

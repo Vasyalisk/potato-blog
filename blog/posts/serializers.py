@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 import posts.models
 from users.serializers import UserListSerializer
 

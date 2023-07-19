@@ -1,8 +1,8 @@
-from rest_framework import serializers
-from rest_framework import permissions
-from rest_framework.viewsets import GenericViewSet
-from django.db import models
 import typing as t
+
+from django.db import models
+from rest_framework import permissions, serializers
+from rest_framework.viewsets import GenericViewSet
 
 
 class ActionViewSet(GenericViewSet):
@@ -13,7 +13,7 @@ class ActionViewSet(GenericViewSet):
     def get_serializer_class(self):
         ser = self.action_serializers.get(self.action, self.serializer_class)
 
-        if ser is None and getattr(self, 'swagger_fake_view', False):
+        if ser is None and getattr(self, "swagger_fake_view", False):
             msg = [
                 f"Swagger generation failed at {self.__class__.__name__}",
                 f"Action: {self.action}",

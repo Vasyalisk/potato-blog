@@ -1,7 +1,8 @@
-from django_filters import rest_framework as filters
-import posts.models
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
+from django_filters import rest_framework as filters
+
+import posts.models
 
 
 class PostFilterSet(filters.FilterSet):

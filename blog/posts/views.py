@@ -1,9 +1,10 @@
-from core.viewsets import ActionViewSet
-from rest_framework import viewsets, mixins, permissions
-import posts.serializers
-import posts.permissions
-import posts.models
+from rest_framework import mixins, permissions, viewsets
+
 import posts.filters
+import posts.models
+import posts.permissions
+import posts.serializers
+from core.viewsets import ActionViewSet
 
 
 class PostViewSet(ActionViewSet, viewsets.ModelViewSet):

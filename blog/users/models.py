@@ -1,10 +1,9 @@
-from django.db import models
-from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, UnicodeUsernameValidator
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UnicodeUsernameValidator
 from django.contrib.auth.models import UserManager as DefaultUserManager
+from django.db import models
 
 
 class UserManager(DefaultUserManager):
-
     # Patch to allow nullable emails
     @classmethod
     def normalize_email(cls, email):
@@ -24,12 +23,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         },
     )
     email = models.EmailField(
-        unique=True,
-        default=None,
-        null=True,
-        error_messages={
-            "unique": "A user with that email already exists."
-        })
+        unique=True, default=None, null=True, error_messages={"unique": "A user with that email already exists."}
+    )
     is_staff = models.BooleanField(
         default=False,
         help_text="Designates whether the user can log into this admin site.",
