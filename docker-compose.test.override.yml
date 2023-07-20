@@ -1,0 +1,6 @@
+services:
+  db:
+    command: "true"
+
+  app:
+    command: pytest

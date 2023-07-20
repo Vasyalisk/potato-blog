@@ -10,3 +10,5 @@ isort
 python-dotenv
 mysqlclient
 django-rest-passwordreset
+pytest-django
+factory_boy
