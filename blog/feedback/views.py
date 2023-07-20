@@ -16,11 +16,12 @@ class CommentViewSet(
     ActionViewSet,
 ):
     http_method_names = ["get", "post", "patch", "delete"]
-    queryset = feedback.models.Comment.objects.all().select_related("user")
+    queryset = feedback.models.Comment.with_likes_count().select_related("user")
     filterset_class = feedback.filters.CommentFilterSet
 
     action_querysets = {
         "destroy": feedback.models.Comment.objects.all(),
+        "list": queryset.order_by("-created_at")
     }
     action_serializers = {
         "list": feedback.serializers.CommentListSerializer,

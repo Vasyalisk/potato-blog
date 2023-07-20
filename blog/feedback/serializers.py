@@ -8,6 +8,7 @@ from users.serializers import UserListSerializer
 
 class CommentListSerializer(serializers.ModelSerializer):
     user = UserListSerializer()
+    likes_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = feedback.models.Comment
@@ -15,6 +16,7 @@ class CommentListSerializer(serializers.ModelSerializer):
             "id",
             "content",
             "user",
+            "likes_count",
         ]
 
 
@@ -25,6 +27,7 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         source="post",
         queryset=posts.models.Post.objects.all(),
     )
+    likes_count = serializers.IntegerField(default=0)
 
     class Meta:
         model = feedback.models.Comment
@@ -33,6 +36,7 @@ class CommentCreateSerializer(serializers.ModelSerializer):
             "content",
             "user",
             "post_id",
+            "likes_count",
         ]
         extra_kwargs = {
             "id": {"read_only": True},
@@ -46,6 +50,7 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 
 class CommentUpdateSerializer(serializers.ModelSerializer):
     user = UserListSerializer(read_only=True)
+    likes_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = feedback.models.Comment
@@ -53,6 +58,7 @@ class CommentUpdateSerializer(serializers.ModelSerializer):
             "id",
             "content",
             "user",
+            "likes_count",
         ]
         extra_kwargs = {
             "id": {"read_only": True},

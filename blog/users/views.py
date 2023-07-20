@@ -24,6 +24,9 @@ class UserViewSet(
         "partial_update": users.serializers.UserUpdateSerializer,
         "me": users.serializers.UserDetailSerializer,
     }
+    action_querysets = {
+        "list": queryset.order_by("username"),
+    }
     http_method_names = ["get", "patch"]
     filterset_class = users.filters.UserFilterSet
 

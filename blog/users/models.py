@@ -13,6 +13,8 @@ class UserManager(DefaultUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     username_validator = UnicodeUsernameValidator()
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     username = models.CharField(
         max_length=150,
         unique=True,
@@ -23,7 +25,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         },
     )
     email = models.EmailField(
-        unique=True, default=None, null=True, error_messages={"unique": "A user with that email already exists."}
+        unique=True,
+        default=None,
+        null=True,
+        error_messages={"unique": "A user with that email already exists."},
+        blank=True,
     )
     is_staff = models.BooleanField(
         default=False,

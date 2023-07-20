@@ -8,7 +8,7 @@ from core.viewsets import ActionViewSet
 
 
 class PostViewSet(ActionViewSet, viewsets.ModelViewSet):
-    queryset = posts.models.Post.objects.all().select_related("user")
+    queryset = posts.models.Post.objects.with_likes_count().select_related("user")
 
     action_serializers = {
         "retrieve": posts.serializers.PostDetailSerializer,
@@ -22,7 +22,7 @@ class PostViewSet(ActionViewSet, viewsets.ModelViewSet):
         "destroy": [permissions.IsAuthenticated, posts.permissions.IsMyPost],
     }
     action_querysets = {
-        "list": posts.models.Post.with_content_short(queryset).defer("content"),
+        "list": queryset.with_content_short().defer("content").order_by("-created_at"),
         "destroy": posts.models.Post.objects.all(),
     }
 
@@ -35,8 +35,9 @@ class TagViewSet(
     mixins.CreateModelMixin,
     ActionViewSet,
 ):
-    queryset = posts.models.Tag.objects.all()
+    queryset = posts.models.Tag.objects.all().order_by("name")
     serializer_class = posts.serializers.TagSerializer
+    filterset_class = posts.filters.TagFilterSet
     action_permissions = {
         "create": [permissions.IsAuthenticated],
     }
