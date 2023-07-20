@@ -1,6 +1,6 @@
-from rest_framework.serializers import ValidationError
 from django.db import models
 from django_filters import rest_framework as filters
+from rest_framework.serializers import ValidationError
 
 import posts.models
 
@@ -11,8 +11,7 @@ class PostFilterSet(filters.FilterSet):
         help_text="Possible values: `created_at`, `-created_at` *(default)*, `title`, `-title`",
     )
     tag_ids = filters.CharFilter(
-        method="filter_tag_ids",
-        help_text="Comma-separated integers. At most 3 `tag_ids` can be specified"
+        method="filter_tag_ids", help_text="Comma-separated integers. At most 3 `tag_ids` can be specified"
     )
     title = filters.CharFilter(
         field_name="title",

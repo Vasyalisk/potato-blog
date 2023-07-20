@@ -6,6 +6,7 @@ class TagQuerySet(models.QuerySet):
     def with_posts_count(self, field_name="posts_count"):
         return self.annotate(**{field_name: models.Count("posts")})
 
+
 class PostQuerySet(models.QuerySet):
     def with_content_short(self, field_name="content_short"):
         return self.annotate(**{field_name: functions.Left("content", 128)})

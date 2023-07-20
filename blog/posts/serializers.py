@@ -62,10 +62,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
     user = UserListSerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     tag_ids = serializers.PrimaryKeyRelatedField(
-        source="tags",
-        queryset=posts.models.Tag.objects.all(),
-        many=True,
-        write_only=True
+        source="tags", queryset=posts.models.Tag.objects.all(), many=True, write_only=True
     )
     likes_count = serializers.IntegerField(default=0)
 

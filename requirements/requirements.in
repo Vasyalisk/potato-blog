@@ -6,7 +6,6 @@ django-environ
 black
 djangorestframework==3.12
 djangorestframework-simplejwt
-drf-standardized-errors
 isort
 python-dotenv
 mysqlclient

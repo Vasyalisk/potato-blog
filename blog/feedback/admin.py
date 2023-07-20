@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 import feedback.models
 
 
@@ -7,7 +8,7 @@ class CommentAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ("user", "post", "content")}),
         ("Misc", {"fields": ("id", "created_at", "updated_at")}),
-        ("Stats", {"fields": ("likes_count",)})
+        ("Stats", {"fields": ("likes_count",)}),
     )
     readonly_fields = (
         "id",
