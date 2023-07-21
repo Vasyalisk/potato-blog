@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.core.mail.message import EmailMultiAlternatives
 
 import emails.models
 
@@ -23,6 +24,30 @@ class UnsentEmailAdmin(admin.ModelAdmin):
     )
     search_fields = ("user__email", "user__username", "subject")
     list_filter = ("reason",)
+    actions = ["resend_emails"]
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.select_related("user")
+        return queryset
+
+    @admin.action(description="Re-send selected emails")
+    def resend_emails(self, request, queryset):
+        sent_count = 0
+        total_count = queryset.count()
+
+        for model in queryset:
+            email = EmailMultiAlternatives(
+                subject=model.subject,
+                body=model.plain_text,
+                to=[model.user.email],
+            )
+            email.attach_alternative(model.html_text, "text/html")
+            sent_count += email.send(fail_silently=True)
+
+        queryset.delete()
+        msg = f"Successfully sent {sent_count} emails out of {total_count} requested"
+        self.message_user(request, message=msg)
 
 
 @admin.register(emails.models.EmailCredentials)

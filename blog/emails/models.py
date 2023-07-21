@@ -12,6 +12,12 @@ class UnsentEmail(models.Model):
 
     reason = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.subject
+
+    class Meta:
+        verbose_name_plural = "Unsent Emails"
+
 
 class EmailCredentials(models.Model):
     """
@@ -26,7 +32,7 @@ class EmailCredentials(models.Model):
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     from_email = models.EmailField()
-    use_tsl = models.BooleanField(default=True)
+    use_tls = models.BooleanField(default=True)
     use_ssl = models.BooleanField(default=False)
     fail_silently = models.BooleanField(default=False)
     timeout = models.IntegerField(
@@ -37,3 +43,9 @@ class EmailCredentials(models.Model):
         default=True,
         help_text="If False, those credentials won't be used to send emails",
     )
+
+    def __str__(self):
+        return self.from_email
+
+    class Meta:
+        verbose_name_plural = "Email Credentials"

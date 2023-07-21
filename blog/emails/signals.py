@@ -18,10 +18,6 @@ def on_reset_password_token_created(sender, instance, reset_password_token, *arg
     :param kwargs:
     :return:
     """
-    if not all((settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)):
-        return
-
-    # send an e-mail to the user
     context = {
         "username": reset_password_token.user.username,
         "email": reset_password_token.user.email,
