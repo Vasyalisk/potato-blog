@@ -28,13 +28,14 @@ def on_reset_password_token_created(sender, instance, reset_password_token, *arg
         "reset_password_url": "{}?token={}".format(
             instance.request.build_absolute_uri(reverse("auth-reset-password-confirm")), reset_password_token.key
         ),
+        "subject": "Password Reset for Blog",
     }
 
     email_html_message = render_to_string("email/user_reset_password.html", context)
     email_plaintext_message = render_to_string("email/user_reset_password.txt", context)
 
     msg = EmailMultiAlternatives(
-        subject="Password Reset for Blog",
+        subject=context["subject"],
         body=email_plaintext_message,
         to=[reset_password_token.user.email],
     )

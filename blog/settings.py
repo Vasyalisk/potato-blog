@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "core",
     "django_filters",
+    "emails",
     "posts",
     "feedback",
 ]
@@ -165,14 +166,12 @@ SWAGGER_SETTINGS = {
     "PERSIST_AUTH": True if env.bool("DEBUG", False) else False,
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", None)
-EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", None)
-DEFAULT_FROM_EMAIL = env.str("EMAIL_HOST_USER", None)
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+EMAIL_BACKEND = "emails.backends.MultiCredentialEmailBackend"
+EMAIL_HOST = None
+EMAIL_HOST_USER = None
+EMAIL_HOST_PASSWORD = None
+DEFAULT_FROM_EMAIL = None
+EMAIL_PORT = None
 
 DJANGO_REST_PASSWORDRESET_NO_INFORMATION_LEAKAGE = True
 # Time in hours about how long the password reset token is active
