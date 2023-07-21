@@ -10,30 +10,37 @@ from core.viewsets import ActionViewSet
 class UserViewSet(
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
-    mixins.UpdateModelMixin,
     ActionViewSet,
 ):
     queryset = users.models.User.objects.all()
     action_permissions = {
-        "partial_update": [permissions.IsAuthenticated, users.permissions.IsMe],
         "me": [permissions.IsAuthenticated],
+        "update_me": [permissions.IsAuthenticated],
     }
     action_serializers = {
         "retrieve": users.serializers.UserDetailSerializer,
         "list": users.serializers.UserListSerializer,
-        "partial_update": users.serializers.UserUpdateSerializer,
         "me": users.serializers.UserDetailSerializer,
+        "update_me": users.serializers.UserUpdateSerializer,
     }
     action_querysets = {
         "list": queryset.order_by("username"),
     }
-    http_method_names = ["get", "patch"]
     filterset_class = users.filters.UserFilterSet
 
-    @decorators.action(detail=False, filterset_class=None, pagination_class=None)
+    @decorators.action(methods=["GET"], detail=False, filterset_class=None, pagination_class=None)
     def me(self, request, *args, **kwargs):
         self.kwargs["pk"] = self.request.user.id
         return mixins.RetrieveModelMixin.retrieve(self, request, *args, **kwargs)
+
+    @me.mapping.patch
+    def update_me(self, request, *args, **kwargs):
+        self.kwargs["pk"] = self.request.user.id
+        return mixins.UpdateModelMixin.partial_update(self, request, *args, **kwargs)
+
+    # Workaround to use UpdateModelMixin in custom action without exposing {basename}/{pk}/ PATCH API
+    update = mixins.UpdateModelMixin.update
+    perform_update = mixins.UpdateModelMixin.perform_update
 
 
 class RegisterView(generics.CreateAPIView):

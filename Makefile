@@ -34,4 +34,4 @@ bash:
 .PHONY: test
 test:
 	@docker-compose down
-	@docker-compose -f docker-compose.yml -f docker-compose.test.override.yml run --rm app
+	@docker-compose -f docker-compose.yml -f docker-compose.test.override.yml run --rm app pytest ${CMD_ARGS}
