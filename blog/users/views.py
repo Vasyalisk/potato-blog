@@ -27,6 +27,7 @@ class UserViewSet(
         "list": queryset.order_by("username"),
     }
     filterset_class = users.filters.UserFilterSet
+    http_method_names = ["get", "patch"]
 
     @decorators.action(methods=["GET"], detail=False, filterset_class=None, pagination_class=None)
     def me(self, request, *args, **kwargs):
