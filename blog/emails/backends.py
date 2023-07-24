@@ -12,42 +12,54 @@ class MultiCredentialEmailBackend(EmailBackend):
     Email sending backend which supports multiple credentials administered via emails.models.EmailCredentials model
     """
 
+    _db_field_names = (
+        "host",
+        "port",
+        "username",
+        "password",
+        "use_tls",
+        "use_ssl",
+        "timeout",
+        "from_email",
+        "fail_silently",
+    )
+
     def __init__(self, fail_silently=None):
         self.overrides = {}
         self.from_email = None
 
-        if fail_silently is None:
+        if fail_silently is not None:
             self.overrides["fail_silently"] = fail_silently
 
-        super().__init__(fail_silently=fail_silently)
+        super().__init__()
+        self.clear_credentials()
+
+    def clear_credentials(self):
+        [setattr(self, name, None) for name in self._db_field_names]
 
     def set_credentials(self):
-        cred_names = [
-            "host",
-            "port",
-            "username",
-            "password",
-            "use_tls",
-            "use_ssl",
-            "from_email",
-            "fail_silently",
-        ]
-
         creds = emails.models.EmailCredentials.objects.filter(are_active=True).order_by("-created_at").first()
 
-        creds_dict = {one: getattr(creds, one, None) for one in cred_names}
+        creds_dict = {}
+        if creds is not None:
+            creds_dict = {name: getattr(creds, name) for name in self._db_field_names}
+
         creds_dict.update(self.overrides)
         [setattr(self, name, val) for name, val in creds_dict.items()]
 
     def send_messages(self, email_messages):
         self.set_credentials()
 
-        if self.host is None:
-            reason = "Email credentials are not set"
-            [self.archive_unsent_message(one, reason=reason) for one in email_messages]
-            return 0
+        if self.host is not None:
+            return super().send_messages(email_messages)
 
-        return super().send_messages(email_messages)
+        reason = "Email credentials are not set"
+        [self.archive_unsent_message(one, reason=reason) for one in email_messages]
+
+        if not self.fail_silently:
+            raise ValueError(reason)
+
+        return 0
 
     def _send(self, email_message: EmailMultiAlternatives) -> bool:
         """
@@ -94,3 +106,10 @@ class MultiCredentialEmailBackend(EmailBackend):
             html_text=html_content,
             reason=reason,
         )
+
+    def close(self):
+        try:
+            super().close()
+        except Exception:
+            self.clear_credentials()
+            raise

@@ -1,5 +1,6 @@
 import factory
 from factory.django import DjangoModelFactory
+
 import posts.models
 import users.factories
 
