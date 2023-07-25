@@ -7,7 +7,7 @@ import users.factories
 
 class TagFactory(DjangoModelFactory):
     class Meta:
-        model = posts.models.Post
+        model = posts.models.Tag
 
     name = factory.Sequence(lambda n: f"Tag {n}")
 
@@ -33,3 +33,15 @@ class PostFactory(DjangoModelFactory):
             return
 
         self.tags.add(*extracted)
+
+    @classmethod
+    def _create(cls, target_class, *args, **kwargs):
+        created_at = kwargs.pop('created_at', None)
+        obj = super()._create(target_class, *args, **kwargs)
+
+        # Setting custom created_at if needed, since y default Django will ignore any auto_now_add field
+        if created_at is not None:
+            obj.created_at = created_at
+            obj.save()
+
+        return obj
