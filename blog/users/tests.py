@@ -49,20 +49,20 @@ class TestUsers:
         assert resp_usernames == {one["username"] for one in data["results"]}
 
     @pytest.mark.parametrize(
-        "sort_by,resp_usernames",
+        "order_by,resp_usernames",
         (
             ("username", sorted(USERNAMES)),
             ("-username", sorted(USERNAMES, reverse=True)),
         ),
     )
-    def test_user_list_sort(self, sort_by, resp_usernames, api_client, user_list):
-        resp = api_client.get(USER_LIST_URL, data={"sort_by": sort_by})
+    def test_user_list_sort(self, order_by, resp_usernames, api_client, user_list):
+        resp = api_client.get(USER_LIST_URL, data={"order_by": order_by})
         assert resp.status_code == 200
         data = resp.json()
         assert resp_usernames == [one["username"] for one in data["results"]]
 
     def test_user_list_sort_invalid(self, db, api_client):
-        resp = api_client.get(USER_LIST_URL, data={"sort_by": "invalid"})
+        resp = api_client.get(USER_LIST_URL, data={"order_by": "invalid"})
         assert resp.status_code == 400
 
     def test_user_detail(self, api_client, user_list):

@@ -1,9 +1,10 @@
-import posts.factories
 import pytest
-import posts.models
-import posts.serializers
 from django.urls import reverse
 from django.utils import timezone
+
+import posts.factories
+import posts.models
+import posts.serializers
 import users.factories
 
 POST_LIST_URL = reverse("post-list")
@@ -52,19 +53,25 @@ class TestPosts:
 
         return [tag1, tag2, tag3]
 
-    @pytest.mark.parametrize("method,url,payload", (
+    @pytest.mark.parametrize(
+        "method,url,payload",
+        (
             ("post", POST_CREATE_URL, {"title": "a", "content": "b", "tag_ids": []}),
             ("patch", POST_UPDATE_URL(1), {"title": "a", "content": "b", "tag_ids": []}),
             ("delete", POST_DELETE_URL(1), {}),
-    ))
+        ),
+    )
     def test_unauthorized(self, method, url, payload, api_client, db):
         resp = getattr(api_client, method)(url, data=payload)
         assert resp.status_code == 401
 
-    @pytest.mark.parametrize("method,url", (
+    @pytest.mark.parametrize(
+        "method,url",
+        (
             ("delete", POST_DELETE_URL),
             ("patch", POST_UPDATE_URL),
-    ))
+        ),
+    )
     def test_modify_not_my_post(self, method, url, api_client, post_list):
         post = post_list[0]
         user = post_list[-1].user
@@ -73,10 +80,13 @@ class TestPosts:
         resp = getattr(api_client, method)(url(post.id), data={})
         assert resp.status_code == 403
 
-    @pytest.mark.parametrize("method,url", (
+    @pytest.mark.parametrize(
+        "method,url",
+        (
             ("delete", POST_DELETE_URL(1)),
             ("patch", POST_UPDATE_URL(1)),
-    ))
+        ),
+    )
     def test_post_not_found(self, method, url, api_client, db):
         user = users.factories.UserFactory()
         api_client.force_authenticate(user)
@@ -102,16 +112,17 @@ class TestPosts:
         ordered_ids = [one.id for one in post_list[:-1]]
         assert [one["id"] for one in data["results"]] == ordered_ids
 
-    @pytest.mark.parametrize("query,a_slice", (
+    @pytest.mark.parametrize(
+        "query,a_slice",
+        (
             # Older than 1st post
             ({"created_at__lte": 1}, slice(1, None)),
-
             # Newer than last post
             ({"created_at__gte": -2}, slice(0, -1)),
-
             # Created between 1st and last post
             ({"created_at__lte": 1, "created_at__gte": -2}, slice(1, -1)),
-    ))
+        ),
+    )
     def test_post_list_filter_created_at(self, query, a_slice, api_client, post_list):
         query = {key: post_list[val].created_at for key, val in query.items()}
         resp = api_client.get(POST_LIST_URL, data=query)
@@ -141,12 +152,15 @@ class TestPosts:
         ordered_ids = [one.id for one in sorted(post_list, key=key, reverse=is_reversed)]
         assert [one["id"] for one in data["results"]] == ordered_ids
 
-    @pytest.mark.parametrize("tag_indexes,post_indexes", (
+    @pytest.mark.parametrize(
+        "tag_indexes,post_indexes",
+        (
             ([0], range(3)),
             ([1], [1]),
             ([1, 2], range(1, 4)),
             (range(3), range(4)),
-    ))
+        ),
+    )
     def test_post_list_filter_tag_ids(self, tag_indexes, post_indexes, api_client, post_list, tag_list):
         tag_ids = map(lambda i: tag_list[i].id, tag_indexes)
         post_ids = list(map(lambda i: post_list[i].id, post_indexes))
@@ -165,11 +179,7 @@ class TestPosts:
         resp = api_client.get(POST_LIST_URL, data=query)
         assert resp.status_code == 200
 
-        post_ids = list(map(
-            lambda p: p.id, filter(
-                lambda p: title.lower() in p.title.lower(), post_list
-            )
-        ))
+        post_ids = list(map(lambda p: p.id, filter(lambda p: title.lower() in p.title.lower(), post_list)))
         data = resp.json()
         assert [one["id"] for one in data["results"]] == post_ids
         assert data["count"] == len(post_ids)
@@ -214,10 +224,13 @@ class TestPosts:
         assert data["id"] == post.id
         assert list(map(lambda t: t["id"], data["tags"])) == list(map(lambda t: t.id, post.tags.all()))
 
-    @pytest.mark.parametrize("field,value", (
+    @pytest.mark.parametrize(
+        "field,value",
+        (
             ("title", "Test"),
             ("content", "Test"),
-    ))
+        ),
+    )
     def test_post_update(self, field, value, api_client, post_list):
         post = post_list[0]
         user = post.user
@@ -229,12 +242,15 @@ class TestPosts:
         post.refresh_from_db()
         assert getattr(post, field) == value
 
-    @pytest.mark.parametrize("indexes", (
+    @pytest.mark.parametrize(
+        "indexes",
+        (
             [0],
             [1, 2],
             [],
             [0, 2],
-    ))
+        ),
+    )
     def test_post_update_tag_ids(self, indexes, api_client, tag_list, post_list):
         post = post_list[0]
         tag_ids = [tag_list[i].id for i in indexes]
@@ -269,9 +285,7 @@ class TestTags:
 
         return [tag1, tag2, tag3]
 
-    @pytest.mark.parametrize("method,url", (
-            ("post", TAG_CREATE_URL),
-    ))
+    @pytest.mark.parametrize("method,url", (("post", TAG_CREATE_URL),))
     def test_unauthorized(self, method, url, api_client, db):
         resp = getattr(api_client, method)(url, data={})
         assert resp.status_code == 401
@@ -284,11 +298,14 @@ class TestTags:
         tag_ids = [one.id for one in tag_list]
         assert [one["id"] for one in data["results"]] == tag_ids
 
-    @pytest.mark.parametrize("name,indexes", (
+    @pytest.mark.parametrize(
+        "name,indexes",
+        (
             ("at", [0, 1]),
             ("DoG", [2]),
             ("test", []),
-    ))
+        ),
+    )
     def test_tags_list_filter_name(self, name, indexes, api_client, tag_list):
         query = {"name": name}
         resp = api_client.get(TAG_LIST_URL, data=query)

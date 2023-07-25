@@ -1,5 +1,5 @@
-from factory.django import DjangoModelFactory
 import factory
+from factory.django import DjangoModelFactory
 
 import feedback.models
 import posts.factories
@@ -16,7 +16,7 @@ class CommentFactory(DjangoModelFactory):
 
     @classmethod
     def _create(cls, target_class, *args, **kwargs):
-        created_at = kwargs.pop('created_at', None)
+        created_at = kwargs.pop("created_at", None)
         obj = super()._create(target_class, *args, **kwargs)
 
         # Setting custom created_at if needed, since y default Django will ignore any auto_now_add field

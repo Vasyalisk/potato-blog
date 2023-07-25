@@ -5,7 +5,7 @@ import users.models
 
 fake = faker.Faker()
 
-username_list = [fake.unique.word() for _ in range(50)]
+username_list = [fake.unique.word().lower() for _ in range(50)]
 email_list = [fake.unique.email() for _ in range(50)]
 
 
