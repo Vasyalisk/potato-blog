@@ -64,7 +64,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
     tag_ids = serializers.PrimaryKeyRelatedField(
         source="tags", queryset=posts.models.Tag.objects.all(), many=True, write_only=True
     )
-    likes_count = serializers.IntegerField(default=0)
+    likes_count = serializers.IntegerField(default=0, read_only=True)
 
     class Meta:
         model = posts.models.Post

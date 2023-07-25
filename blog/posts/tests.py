@@ -4,8 +4,16 @@ import posts.models
 import posts.serializers
 from django.urls import reverse
 from django.utils import timezone
+import users.factories
 
 POST_LIST_URL = reverse("post-list")
+POST_CREATE_URL = reverse("post-list")
+POST_DETAIL_URL = lambda post_id: reverse("post-detail", kwargs={"pk": post_id})
+POST_UPDATE_URL = lambda post_id: reverse("post-detail", kwargs={"pk": post_id})
+POST_DELETE_URL = lambda post_id: reverse("post-detail", kwargs={"pk": post_id})
+
+TAG_LIST_URL = reverse("tag-list")
+TAG_CREATE_URL = reverse("tag-list")
 
 
 class TestPosts:
@@ -31,6 +39,49 @@ class TestPosts:
         )
 
         return [post1, post2, post3, post4]
+
+    @pytest.fixture()
+    def tag_list(self, post_list):
+        tag1, tag2, tag3 = posts.factories.TagFactory.create_batch(3)
+        post1, post2, post3, post4 = post_list
+
+        post1.tags.add(tag1)
+        post2.tags.add(tag1, tag2)
+        post3.tags.add(tag1, tag3)
+        post4.tags.add(tag3)
+
+        return [tag1, tag2, tag3]
+
+    @pytest.mark.parametrize("method,url,payload", (
+            ("post", POST_CREATE_URL, {"title": "a", "content": "b", "tag_ids": []}),
+            ("patch", POST_UPDATE_URL(1), {"title": "a", "content": "b", "tag_ids": []}),
+            ("delete", POST_DELETE_URL(1), {}),
+    ))
+    def test_unauthorized(self, method, url, payload, api_client, db):
+        resp = getattr(api_client, method)(url, data=payload)
+        assert resp.status_code == 401
+
+    @pytest.mark.parametrize("method,url", (
+            ("delete", POST_DELETE_URL),
+            ("patch", POST_UPDATE_URL),
+    ))
+    def test_modify_not_my_post(self, method, url, api_client, post_list):
+        post = post_list[0]
+        user = post_list[-1].user
+        api_client.force_authenticate(user)
+
+        resp = getattr(api_client, method)(url(post.id), data={})
+        assert resp.status_code == 403
+
+    @pytest.mark.parametrize("method,url", (
+            ("delete", POST_DELETE_URL(1)),
+            ("patch", POST_UPDATE_URL(1)),
+    ))
+    def test_post_not_found(self, method, url, api_client, db):
+        user = users.factories.UserFactory()
+        api_client.force_authenticate(user)
+        resp = getattr(api_client, method)(url, data={})
+        assert resp.status_code == 404
 
     def test_post_list(self, api_client, post_list):
         resp = api_client.get(POST_LIST_URL)
@@ -90,18 +141,6 @@ class TestPosts:
         ordered_ids = [one.id for one in sorted(post_list, key=key, reverse=is_reversed)]
         assert [one["id"] for one in data["results"]] == ordered_ids
 
-    @pytest.fixture()
-    def tag_list(self, post_list):
-        tag1, tag2, tag3 = posts.factories.TagFactory.create_batch(3)
-        post1, post2, post3, post4 = post_list
-
-        post1.tags.add(tag1)
-        post2.tags.add(tag1, tag2)
-        post3.tags.add(tag1, tag3)
-        post4.tags.add(tag3)
-
-        return [tag1, tag2, tag3]
-
     @pytest.mark.parametrize("tag_indexes,post_indexes", (
             ([0], range(3)),
             ([1], [1]),
@@ -134,3 +173,149 @@ class TestPosts:
         data = resp.json()
         assert [one["id"] for one in data["results"]] == post_ids
         assert data["count"] == len(post_ids)
+
+    def test_post_create(self, db, api_client):
+        tag = posts.factories.TagFactory()
+        user = users.factories.UserFactory()
+        payload = {
+            "title": "Test post",
+            "content": "abcd",
+            "tag_ids": [tag.id],
+        }
+
+        api_client.force_authenticate(user)
+        resp = api_client.post(POST_CREATE_URL, data=payload)
+        assert resp.status_code == 201
+
+        data = resp.json()
+        post_id = data["id"]
+        post = posts.models.Post.objects.get(id=post_id)
+        assert post.title == payload["title"]
+        assert post.content == payload["content"]
+        assert list(map(lambda t: t.id, post.tags.all())) == payload["tag_ids"]
+
+    def test_post_create_invalid_tag(self, db, api_client):
+        user = users.factories.UserFactory()
+        payload = {
+            "title": "Test post",
+            "content": "abcd",
+            "tag_ids": [1],
+        }
+        api_client.force_authenticate(user)
+        resp = api_client.post(POST_CREATE_URL, data=payload)
+        assert resp.status_code == 400
+        assert not posts.models.Post.objects.exists()
+
+    def test_post_detail(self, api_client, post_list, tag_list):
+        post = post_list[0]
+        resp = api_client.get(POST_DETAIL_URL(post.id))
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["id"] == post.id
+        assert list(map(lambda t: t["id"], data["tags"])) == list(map(lambda t: t.id, post.tags.all()))
+
+    @pytest.mark.parametrize("field,value", (
+            ("title", "Test"),
+            ("content", "Test"),
+    ))
+    def test_post_update(self, field, value, api_client, post_list):
+        post = post_list[0]
+        user = post.user
+        api_client.force_authenticate(user)
+
+        resp = api_client.patch(POST_UPDATE_URL(post.id), data={field: value})
+        assert resp.status_code == 200
+
+        post.refresh_from_db()
+        assert getattr(post, field) == value
+
+    @pytest.mark.parametrize("indexes", (
+            [0],
+            [1, 2],
+            [],
+            [0, 2],
+    ))
+    def test_post_update_tag_ids(self, indexes, api_client, tag_list, post_list):
+        post = post_list[0]
+        tag_ids = [tag_list[i].id for i in indexes]
+
+        payload = {"tag_ids": tag_ids}
+        api_client.force_authenticate(post.user)
+        resp = api_client.patch(POST_UPDATE_URL(post.id), data=payload)
+        assert resp.status_code == 200
+
+        data = resp.json()
+        assert [one["id"] for one in data["tags"]] == tag_ids
+
+        post.refresh_from_db()
+        assert list(post.tags.values_list("id", flat=True)) == tag_ids
+
+    def test_post_delete(self, api_client, post_list):
+        post = post_list[0]
+        api_client.force_authenticate(post.user)
+
+        resp = api_client.delete(POST_DELETE_URL(post.id))
+        assert resp.status_code == 204
+
+        assert not posts.models.Post.objects.filter(id=post.id).exists()
+
+
+class TestTags:
+    @pytest.fixture()
+    def tag_list(self, db):
+        tag1 = posts.factories.TagFactory(name="bat")
+        tag2 = posts.factories.TagFactory(name="cat")
+        tag3 = posts.factories.TagFactory(name="dog")
+
+        return [tag1, tag2, tag3]
+
+    @pytest.mark.parametrize("method,url", (
+            ("post", TAG_CREATE_URL),
+    ))
+    def test_unauthorized(self, method, url, api_client, db):
+        resp = getattr(api_client, method)(url, data={})
+        assert resp.status_code == 401
+
+    def test_tags_list(self, api_client, tag_list):
+        resp = api_client.get(TAG_LIST_URL)
+        assert resp.status_code == 200
+
+        data = resp.json()
+        tag_ids = [one.id for one in tag_list]
+        assert [one["id"] for one in data["results"]] == tag_ids
+
+    @pytest.mark.parametrize("name,indexes", (
+            ("at", [0, 1]),
+            ("DoG", [2]),
+            ("test", []),
+    ))
+    def test_tags_list_filter_name(self, name, indexes, api_client, tag_list):
+        query = {"name": name}
+        resp = api_client.get(TAG_LIST_URL, data=query)
+        assert resp.status_code == 200
+
+        data = resp.json()
+        assert data["count"] == len(indexes)
+        tag_ids = [tag_list[one].id for one in indexes]
+        assert [one["id"] for one in data["results"]] == tag_ids
+
+    def test_create_tag(self, api_client, db):
+        user = users.factories.UserFactory()
+        api_client.force_authenticate(user)
+        body = {"name": "TeSt"}
+        resp = api_client.post(TAG_CREATE_URL, data=body)
+        assert resp.status_code == 201
+
+        data = resp.json()
+        tag_id = data["id"]
+        tag = posts.models.Tag.objects.get(id=tag_id)
+        assert tag.name == body["name"].lower()
+
+    def test_create_tag_duplicate(self, api_client, tag_list):
+        user = users.factories.UserFactory()
+        api_client.force_authenticate(user)
+
+        body = {"name": tag_list[0].name}
+        resp = api_client.post(TAG_CREATE_URL, data=body)
+        assert resp.status_code == 400
+        assert posts.models.Tag.objects.filter(name=tag_list[0].name).count() == 1
