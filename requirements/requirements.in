@@ -12,3 +12,4 @@ mysqlclient
 django-rest-passwordreset
 pytest-django
 factory_boy
+pytest-xdist

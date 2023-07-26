@@ -14,9 +14,9 @@ help:
 .PHONY: lint
 lint:
 	@echo "Sorting imports..."
-	@docker-compose exec app isort ${APP_DIR} --profile black --skip migrations --line-length 120
+	@docker-compose run --rm app isort ${APP_DIR} --profile black --skip migrations --line-length 120
 	@echo "Formatting code..."
-	@docker-compose exec app black ${APP_DIR} --line-length 120 --extend-exclude "/(|migrations)/"
+	@docker-compose run --rm app black ${APP_DIR} --line-length 120 --extend-exclude "/(|migrations)/"
 
 .PHONY: create-venv
 create-venv:
@@ -34,4 +34,4 @@ bash:
 .PHONY: test
 test:
 	@docker-compose down
-	@docker-compose -f docker-compose.yml -f docker-compose.test.override.yml run --rm app pytest ${CMD_ARGS}
+	@docker-compose -f docker-compose.yml -f docker-compose.test.override.yml run --rm app pytest ${CMD_ARGS} -n auto

@@ -27,7 +27,7 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         source="post",
         queryset=posts.models.Post.objects.all(),
     )
-    likes_count = serializers.IntegerField(default=0)
+    likes_count = serializers.IntegerField(default=0, read_only=True)
 
     class Meta:
         model = feedback.models.Comment
