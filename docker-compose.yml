@@ -13,6 +13,7 @@ services:
     volumes:
       - ./blog:/app
       - ./requirements:/requirements
+      - ./scripts:/scripts
 
   db:
     image: mysql:8.0

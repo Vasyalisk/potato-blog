@@ -15,6 +15,8 @@ help:
 lint:
 	@echo "Sorting imports..."
 	@docker-compose run --rm app isort ${APP_DIR} --profile black --skip migrations --line-length 120
+	@echo "Sorting requirements.."
+	@docker-compose run --rm app python /scripts/sort_requirements.py /requirements/requirements.in
 	@echo "Formatting code..."
 	@docker-compose run --rm app black ${APP_DIR} --line-length 120 --extend-exclude "/(|migrations)/"
 
