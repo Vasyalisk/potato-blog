@@ -6,10 +6,7 @@ import posts.models
 
 
 class PostFilterSet(filters.FilterSet):
-    order_by = filters.OrderingFilter(
-        fields=["created_at", "title"],
-        help_text="Possible values: `created_at`, `-created_at` *(default)*, `title`, `-title`",
-    )
+    order_by = filters.OrderingFilter(fields=["created_at", "title"])
     tag_ids = filters.CharFilter(
         method="filter_tag_ids", help_text="Comma-separated integers. At most 3 `tag_ids` can be specified"
     )

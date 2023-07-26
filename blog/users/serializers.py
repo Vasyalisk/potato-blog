@@ -2,9 +2,10 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
+from drf_spectacular.utils import extend_schema_field
+from django_rest_passwordreset.serializers import PasswordValidateMixin
 
 import users.models
 
@@ -22,11 +23,11 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "email",
         ]
 
-    @swagger_serializer_method(serializers.BooleanField())
+    @extend_schema_field(serializers.BooleanField())
     def get_is_me(self, user):
         return self.context["request"].user == user
 
-    @swagger_serializer_method(serializers.EmailField(allow_null=True))
+    @extend_schema_field(serializers.EmailField(allow_null=True))
     def get_email(self, user):
         is_me = self.get_is_me(user)
 
@@ -57,8 +58,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    access_token = serializers.SerializerMethodField()
-    refresh_token = serializers.SerializerMethodField()
+    access = serializers.SerializerMethodField()
+    refresh = serializers.SerializerMethodField()
 
     class Meta:
         model = users.models.User
@@ -66,8 +67,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "password",
-            "access_token",
-            "refresh_token",
+            "access",
+            "refresh",
         ]
         extra_kwargs = {
             "username": {"write_only": True},
@@ -80,10 +81,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         self.context["token"] = RefreshToken.for_user(user)
         return user
 
-    def get_access_token(self, user):
+    @extend_schema_field(serializers.CharField())
+    def get_access(self, user):
         return str(self.context["token"].access_token)
 
-    def get_refresh_token(self, user):
+    @extend_schema_field(serializers.CharField())
+    def get_refresh(self, user):
         return str(self.context["token"])
 
 
@@ -116,3 +119,14 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.password = make_password(validated_data["new_password"])
         user.save()
         return user
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(write_only=True)
+    status = serializers.CharField(read_only=True, default="Ok")
+
+
+class ResetPasswordConfirmSerializer(PasswordValidateMixin, serializers.Serializer):
+    password = serializers.CharField(label="Password", style={'input_type': 'password'}, write_only=True)
+    token = serializers.CharField(write_only=True)
+    status = serializers.CharField(read_only=True, default="Ok")

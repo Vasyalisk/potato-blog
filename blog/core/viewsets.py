@@ -12,15 +12,6 @@ class ActionViewSet(GenericViewSet):
 
     def get_serializer_class(self):
         ser = self.action_serializers.get(self.action, self.serializer_class)
-
-        if ser is None and getattr(self, "swagger_fake_view", False):
-            msg = [
-                f"Swagger generation failed at {self.__class__.__name__}",
-                f"Action: {self.action}",
-                f"HTTP method: {self.request.method}",
-            ]
-            raise ValueError("\n".join(msg))
-
         return ser
 
     def get_permissions(self):

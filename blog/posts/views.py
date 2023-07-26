@@ -5,6 +5,7 @@ import posts.models
 import posts.permissions
 import posts.serializers
 from core.viewsets import ActionViewSet
+from core.serializers import EmptySerializer
 
 
 class PostViewSet(ActionViewSet, viewsets.ModelViewSet):
@@ -15,6 +16,7 @@ class PostViewSet(ActionViewSet, viewsets.ModelViewSet):
         "partial_update": posts.serializers.PostUpdateSerializer,
         "list": posts.serializers.PostListSerializer,
         "create": posts.serializers.PostCreateSerializer,
+        "destroy": EmptySerializer,
     }
     action_permissions = {
         "partial_update": [permissions.IsAuthenticated, posts.permissions.IsMyPost],

@@ -2,9 +2,9 @@ from rest_framework import decorators, generics, mixins, permissions
 
 import users.filters
 import users.models
-import users.permissions
 import users.serializers
 from core.viewsets import ActionViewSet
+from django_rest_passwordreset.views import ResetPasswordConfirm, ResetPasswordRequestToken
 
 
 class UserViewSet(
@@ -52,3 +52,27 @@ class RegisterView(generics.CreateAPIView):
 class ChangePasswordView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = users.serializers.ChangePasswordSerializer
+
+
+class ResetPasswordView(ResetPasswordRequestToken):
+    serializer_class = users.serializers.ResetPasswordSerializer
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == 201:
+            response.data["status"] = "Ok"
+
+        return response
+
+
+class ResetPasswordConfirmView(ResetPasswordConfirm):
+    serializer_class = users.serializers.ResetPasswordConfirmSerializer
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == 201:
+            response.data["status"] = "Ok"
+
+        return response

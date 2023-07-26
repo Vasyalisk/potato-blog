@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent
 SECRET_KEY = env.str("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG")
 
 ALLOWED_HOSTS = []
 
@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    # "rest_framework.authtoken", # Workaround for bug https://github.com/encode/django-rest-framework/pull/7571
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "django_rest_passwordreset",
-    "drf_yasg",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
     "core",
     "django_filters",
     "emails",
@@ -142,6 +144,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework_simplejwt.authentication.JWTAuthentication"],
 }
 
@@ -154,16 +157,20 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
-SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header",
-        }
-    },
-    "USE_SESSION_AUTH": False,
-    "PERSIST_AUTH": True if env.bool("DEBUG", False) else False,
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Potato Blog API',
+    "DESCRIPTION": "Simple blog API implementation",
+    'VERSION': 'v1',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "defaultModelsExpandDepth": -1,
+        "persistAuthorization": DEBUG,
+    }
+    # OTHER SETTINGS
 }
 
 EMAIL_BACKEND = "emails.backends.MultiCredentialEmailBackend"

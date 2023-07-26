@@ -1,8 +1,8 @@
 black
 Django==4.1
 django-filter
-drf-yasg==1.21
 django-environ
+drf-spectacular[sidecar]==0.26.4
 djangorestframework==3.12
 django-rest-passwordreset
 djangorestframework-simplejwt
@@ -13,3 +13,4 @@ pip-tools
 pytest-xdist
 pytest-django
 python-dotenv
+pytz

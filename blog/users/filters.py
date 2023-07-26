@@ -5,9 +5,7 @@ import users.models
 
 class UserFilterSet(filters.FilterSet):
     username = filters.CharFilter(lookup_expr="icontains", help_text="Case-insensitive search")
-    order_by = filters.OrderingFilter(
-        fields=["username"], help_text="Possible values: `username` *(default)*, `-username`"
-    )
+    order_by = filters.OrderingFilter(fields=["username"])
 
     class Meta:
         model = users.models.User

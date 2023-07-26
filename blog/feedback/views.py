@@ -6,6 +6,7 @@ import feedback.permissions
 import feedback.serializers
 import posts.models
 from core.viewsets import ActionViewSet
+from core.serializers import EmptySerializer
 
 
 class CommentViewSet(
@@ -24,6 +25,7 @@ class CommentViewSet(
         "list": feedback.serializers.CommentListSerializer,
         "create": feedback.serializers.CommentCreateSerializer,
         "partial_update": feedback.serializers.CommentUpdateSerializer,
+        "destroy": EmptySerializer,
     }
     action_permissions = {
         "create": [permissions.IsAuthenticated],
