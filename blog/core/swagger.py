@@ -14,7 +14,7 @@ def ignore_openapi_view_extensions():
     updated_registry = []
 
     for one in OpenApiViewExtension._registry:
-        full_name = f"{one.__module__}.{one.__name__}"
+        full_name = f"{one.__module__}.{one.__qualname__}"
 
         if full_name not in ignored_extensions:
             updated_registry.append(one)
