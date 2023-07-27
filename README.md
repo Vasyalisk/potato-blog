@@ -29,7 +29,7 @@
 - create admin user to access admin pages -> `python manage.py create_default_admin` (use with  `--help` for details)
 - start server (see section 1 and 2):
   - swaggers docs are served at http://localhost:8000/docs/ by default
-  - admin panel is accessible via http://localhost:8000/admin/ (see ADMIN_USERNAME and ADMIN_PASSWORD .env variables)
+  - admin panel is accessible via http://localhost:8000/admin/ (see `ADMIN_USERNAME` and `ADMIN_PASSWORD` variables in `.env`)
 - in order to send real emails on password reset set up Email Credentials:
   - go to admin panel -> EMAILS -> Email Credentials -> Click "Add" or "ADD EMAIL CREDENTIALS" button
   - dy default those are preconfigured to use Gmail TSL connection (just add username, password and email)
