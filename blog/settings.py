@@ -144,7 +144,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework_simplejwt.authentication.JWTAuthentication"],
 }
 
@@ -158,19 +158,22 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Potato Blog API',
+    "TITLE": "Potato Blog API",
     "DESCRIPTION": "Simple blog API implementation",
-    'VERSION': 'v1',
-    'SERVE_INCLUDE_SCHEMA': False,
-    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
-    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
-    'REDOC_DIST': 'SIDECAR',
+    "VERSION": "v1",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
     "SWAGGER_UI_SETTINGS": {
         "deepLinking": True,
         "defaultModelsExpandDepth": -1,
         "persistAuthorization": DEBUG,
-    }
-    # OTHER SETTINGS
+    },
+    # Custom setting to avoid certain Spectacular extension, see core.swagger.ignore_openapi_view_extensions
+    "IGNORED_OPENAPI_VIEW_EXTENSIONS": [
+        "drf_spectacular.contrib.rest_framework.ObtainAuthTokenView",
+    ],
 }
 
 EMAIL_BACKEND = "emails.backends.MultiCredentialEmailBackend"

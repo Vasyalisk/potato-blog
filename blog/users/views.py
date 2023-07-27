@@ -1,10 +1,10 @@
+from django_rest_passwordreset.views import ResetPasswordConfirm, ResetPasswordRequestToken
 from rest_framework import decorators, generics, mixins, permissions
 
 import users.filters
 import users.models
 import users.serializers
 from core.viewsets import ActionViewSet
-from django_rest_passwordreset.views import ResetPasswordConfirm, ResetPasswordRequestToken
 
 
 class UserViewSet(

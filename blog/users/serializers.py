@@ -2,10 +2,10 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django_rest_passwordreset.serializers import PasswordValidateMixin
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-from drf_spectacular.utils import extend_schema_field
-from django_rest_passwordreset.serializers import PasswordValidateMixin
 
 import users.models
 
@@ -127,6 +127,6 @@ class ResetPasswordSerializer(serializers.Serializer):
 
 
 class ResetPasswordConfirmSerializer(PasswordValidateMixin, serializers.Serializer):
-    password = serializers.CharField(label="Password", style={'input_type': 'password'}, write_only=True)
+    password = serializers.CharField(label="Password", style={"input_type": "password"}, write_only=True)
     token = serializers.CharField(write_only=True)
     status = serializers.CharField(read_only=True, default="Ok")

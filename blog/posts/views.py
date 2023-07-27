@@ -4,8 +4,8 @@ import posts.filters
 import posts.models
 import posts.permissions
 import posts.serializers
-from core.viewsets import ActionViewSet
 from core.serializers import EmptySerializer
+from core.viewsets import ActionViewSet
 
 
 class PostViewSet(ActionViewSet, viewsets.ModelViewSet):

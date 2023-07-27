@@ -2,15 +2,15 @@ black
 Django==4.1
 django-filter
 django-environ
-drf-spectacular[sidecar]==0.26.4
 djangorestframework==3.12
 django-rest-passwordreset
 djangorestframework-simplejwt
+drf-spectacular[sidecar]==0.26.4
 factory_boy
 isort
 mysqlclient
+pytz
 pip-tools
 pytest-xdist
 pytest-django
 python-dotenv
-pytz

@@ -5,8 +5,8 @@ import feedback.models
 import feedback.permissions
 import feedback.serializers
 import posts.models
-from core.viewsets import ActionViewSet
 from core.serializers import EmptySerializer
+from core.viewsets import ActionViewSet
 
 
 class CommentViewSet(

@@ -158,8 +158,8 @@ class TestAuthorization:
         resp = api_client.post(AUTH_REGISTER_URL, data=body)
         assert resp.status_code == 201
         data = resp.json()
-        assert "access_token" in data
-        assert "refresh_token" in data
+        assert "access" in data
+        assert "refresh" in data
 
         user = users.models.User.objects.get(username=body["username"], email=body["email"])
         assert user.password != body["password"]
