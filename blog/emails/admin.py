@@ -55,7 +55,7 @@ class EmailCredentialsAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ("host", "port", "username", "password", "from_email")}),
         ("Misc", {"fields": ("id", "created_at", "updated_at", "are_active")}),
-        ("Extra", {"fields": ("use_tsl", "use_ssl", "fail_silently", "timeout")}),
+        ("Extra", {"fields": ("use_tls", "use_ssl", "fail_silently", "timeout")}),
     )
     readonly_fields = (
         "id",
