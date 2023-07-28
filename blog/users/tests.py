@@ -33,6 +33,17 @@ class TestUsers:
         assert data["count"] == len(user_list)
 
     @pytest.mark.parametrize(
+        "method,url",
+        (
+            ("get", USER_ME_URL),
+            ("patch", USER_UPDATE_ME_URL),
+        ),
+    )
+    def test_unauthorized(self, method, url, api_client, db):
+        resp = getattr(api_client, method)(url, data={})
+        assert resp.status_code == 401
+
+    @pytest.mark.parametrize(
         "search,resp_usernames",
         (
             ("fla", {"flash"}),
@@ -100,10 +111,6 @@ class TestUsers:
         assert data["email"] == user.email
         assert data["is_me"] == True
 
-    def test_user_me_unauthorized(self, db, api_client):
-        resp = api_client.get(USER_ME_URL)
-        assert resp.status_code == 401
-
     @pytest.mark.parametrize("updated_field", ("username", "email"))
     def test_user_update_me(self, updated_field, api_client, user_list):
         user = user_list[0]
@@ -117,11 +124,6 @@ class TestUsers:
 
         user.refresh_from_db()
         assert getattr(user, updated_field) == updated_value
-
-    def test_user_update_me_unauthorized(self, api_client, db):
-        body = {"username": "test"}
-        resp = api_client.patch(USER_UPDATE_ME_URL, data=body)
-        assert resp.status_code == 401
 
     @pytest.mark.parametrize("unique_field", ("username", "email"))
     def test_update_me_unique(self, unique_field, api_client, user_list):
