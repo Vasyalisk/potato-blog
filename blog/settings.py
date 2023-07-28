@@ -91,12 +91,12 @@ WSGI_APPLICATION = "wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": "django.db.backends.postgresql",
         "HOST": env.str("DB_HOST"),
         "NAME": env.str("DB_NAME"),
         "USER": env.str("DB_USER"),
         "PASSWORD": env.str("DB_PASSWORD"),
-        "PORT": env.int("DB_PORT", 3306),
+        "PORT": env.int("DB_PORT", 5432),
     }
 }
 

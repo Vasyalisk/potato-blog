@@ -16,13 +16,12 @@ services:
       - ./scripts:/scripts
 
   db:
-    image: mysql:8.0
+    image: postgres:15
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
     volumes:
-      - ./db_data:/var/lib/mysql
+      - ./db_data:/var/lib/postgresql/data
     ports:
-      - "3306:3306"
+      - "5432:5432"

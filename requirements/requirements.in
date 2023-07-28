@@ -9,8 +9,8 @@ drf-spectacular[sidecar]==0.26.4
 factory_boy
 gunicorn
 isort
-mysqlclient
 pytz
+psycopg2
 pip-tools
 pytest-xdist
 pytest-django
