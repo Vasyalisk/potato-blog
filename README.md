@@ -40,3 +40,24 @@
 - to run tests via Docker -> `make test` (accepts pytest args via `CMD_ARGS` argument, e.g. `make test CMD_ARGS="posts/tests.py"` see https://docs.pytest.org/en/7.1.x/how-to/usage.html)
 - to run tests via venv -> `cd blog && pytest -n auto`
 
+### 5. Packages overview
+- `black` - Python linter and code formatter
+- `Django` - server framework
+- `django-filter` - Django extension to serialize query parameters
+- `django-environ` - Django parser for .env files
+- `djangorestframework` - RESTful extension for Django
+- `django-rest-passwordreset` - reset password APIs for Django-REST
+- `djangorestframework-simplejwt` - JWT authentication and related authentication APIs for Django-REST
+- `drf-spectacular` - Swagger documentation generator for Django-REST
+- `drf-spectacular[sidecar]` - optional Spectacular extension to serve local Swagger static files instead of CDN
+- `factory_boy` - factories to create / mock various Python objects during tests
+- `gunicorn` - WSGI server for UNIX systems
+- `isort` - utility to sort Python imports
+- `mysqlclient` - MySQL database adapter
+- `pytz` - Python timezone module
+- `pip-tools` - PIP utilities
+- `pytest-xdist` - allows running pytest on multiple cores
+- `pytest-django` - pytest extension for Django-REST
+- `python-dotenv` - .env parser
+- `whitenoise` - wrapper to serve static files as part of WSGI application
+
