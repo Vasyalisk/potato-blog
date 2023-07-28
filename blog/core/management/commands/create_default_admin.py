@@ -11,4 +11,8 @@ class Command(BaseCommand):
         password = env.str("ADMIN_PASSWORD")
 
         User = get_user_model()
+
+        if User.objects.filter(username=username).exists():
+            return
+
         User.objects.create_superuser(email=email, username=username, password=password)
