@@ -6,8 +6,11 @@ APP_DIR=.
 help:
 	@echo "To activate virtual env run: source ${VENV}"
 	@echo ""
-	@echo "pip-compile  Pin package versions from requirements.in"
 	@echo "lint         Format python files and sort imports"
+	@echo "create-venv  Create new virtual environment and install Python packages"
+	@echo "pip-compile  Pin package versions from requirements.in"
+	@echo "bash  		Start bash console inside Docker"
+	@echo "test  		Run tests inside dedicated Docker container, accepts pytest args as CMD_ARGS"
 	@echo ""
 	@echo "To deactivate virtual env run: deactivate"
 
