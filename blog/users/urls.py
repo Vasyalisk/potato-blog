@@ -9,6 +9,7 @@ router.register("users", views.UserViewSet, basename="user")
 
 
 urlpatterns = [
+    path("users/me/", views.UserMeViewSet.as_view({"get": "retrieve", "patch": "partial_update"}), name="user-me"),
     *router.urls,
     path("auth/register/", views.RegisterView.as_view(), name="auth-register"),
     path("auth/login/", TokenObtainPairView.as_view(), name="auth-login"),

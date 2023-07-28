@@ -30,7 +30,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 # Application definition
 
@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    # "rest_framework.authtoken", # Workaround for bug https://github.com/encode/django-rest-framework/pull/7571
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "django_rest_passwordreset",
@@ -58,6 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -159,8 +159,23 @@ SIMPLE_JWT = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Potato Blog API",
-    "DESCRIPTION": "Simple blog API implementation",
+    "DESCRIPTION": (
+        "### Simple blog API implementation\n\n"
+        "#### User authorization\n\n"
+        "1. Obtain access token via [logging in](#/auth/auth_login_create) or "
+        "[registering new user](#/auth/auth_register_create)\n\n"
+        "2. Click on lock icon\n\n"
+        "3. Copy / paste access token into `Value` field\n\n"
+        "4. Click `Authorize` then `Close`\n\n"
+        "5. Now all lock icons should be in the locked state\n\n"
+        "#### Admin panel\n\n"
+        "Admin panel is accessible under this [url](/admin/)\n\n"
+        "#### Schema definitions\n\n"
+        "[Download YAML](/schema/?format=yaml)\n\n"
+        "[Download JSON](/schema/?format=json)\n\n"
+    ),
     "VERSION": "v1",
+    "COMPONENT_SPLIT_REQUEST": True,
     "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
@@ -169,11 +184,13 @@ SPECTACULAR_SETTINGS = {
         "deepLinking": True,
         "defaultModelsExpandDepth": -1,
         "persistAuthorization": DEBUG,
+        "filter": True,
     },
     # Custom setting to avoid certain Spectacular extension, see core.swagger.ignore_openapi_view_extensions
     "IGNORED_OPENAPI_VIEW_EXTENSIONS": [
         "drf_spectacular.contrib.rest_framework.ObtainAuthTokenView",
     ],
+    "SCHEMA_PATH_PREFIX": "/api/",
 }
 
 EMAIL_BACKEND = "emails.backends.MultiCredentialEmailBackend"

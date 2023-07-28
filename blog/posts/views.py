@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, permissions, viewsets
 
 import posts.filters
@@ -8,6 +9,13 @@ from core.serializers import EmptySerializer
 from core.viewsets import ActionViewSet
 
 
+@extend_schema_view(
+    retrieve=extend_schema(description=("Get detailed post info")),
+    partial_update=extend_schema(description=("Update post\n\n" "Only authorized owner has permission to update post")),
+    list=extend_schema(description=("List and / or filter posts")),
+    create=extend_schema(description=("Create new post\n\n" "Current authorized user becomes owner of the post")),
+    destroy=extend_schema(description=("Delete post\n\n" "Only authorized owner has permission to delete post")),
+)
 class PostViewSet(ActionViewSet, viewsets.ModelViewSet):
     queryset = posts.models.Post.objects.with_likes_count().select_related("user")
 
@@ -32,6 +40,17 @@ class PostViewSet(ActionViewSet, viewsets.ModelViewSet):
     filterset_class = posts.filters.PostFilterSet
 
 
+@extend_schema_view(
+    list=extend_schema(description=("List and / or filter tags")),
+    create=extend_schema(
+        description=(
+            "Create new tag\n\n"
+            "- Each tag should have unique name\n\n"
+            "- Tag name gets converted to lower-case\n\n"
+            "- Only authorized users can create new tags"
+        )
+    ),
+)
 class TagViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,

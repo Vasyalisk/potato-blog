@@ -4,7 +4,7 @@
 ### 1. Setting up environment via docker-compose
 
 - requirements: Docker is installed
-- copy provided `.env.dist` file and fill in / change missing env params -> `mv .env.dist .env`
+- copy provided `.env.dist` file and fill in / change missing env params -> `cp .env.dist .env`
 - build Docker images -> `docker-compose build`
 - to start all services (server and database) run -> `docker-compose up`
 - to access bash console withing running app container use -> `docker compose exec app bash` or shortcut -> `make bash`
@@ -16,7 +16,7 @@
 - requirements: `
   - Python 3.9 or higher is installed
   - default-libmysqlclient-dev` or similar is installed (required by mysqlclient Python library, see https://pypi.org/project/mysqlclient/)
-- copy provided `.env.dist` file and fill in / change missing env params -> `mv .env.dist .env`
+- copy provided `.env.dist` file and fill in / change missing env params -> `cp .env.dist .env`
 - create venv -> `make create-venv`
 - to activate venv -> `source .venv` (see `make help` as well)
 - to run server (activated venv and working database is required) -> `python manage.py run_local_server`
